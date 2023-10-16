@@ -1,2 +1,0 @@
-Warning[2068] C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\poc relogio.c 124 : obsolete use of implicit 'int' detected
-Warning[2103] C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\poc relogio.c 124 : default startup code expects main function declared as 'void main (void)'
