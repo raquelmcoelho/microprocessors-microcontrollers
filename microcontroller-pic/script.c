@@ -1,76 +1,93 @@
 #include <p18f4520.h>
 
-// RS=0 instrucao
-// RS=1 dado
+#define RS LATCbits.LATC5
+#define RW LATCbits.LATC6
+#define EN LATCbits.LATC7
+#define porta_lcd LATD
 
-// RW=0 escrita
-// RW=1 leitura
+int caracters_writed = 0;
 
-// E-transicao negativa (1->0)
-// VSS=0
-// VDD=1
+void enable();
+void send_instruction(unsigned char command);
+void send_data(unsigned char data);
+void delay_ms(char ms);
+void configure_ports();
+void configure();
 
-// 1 linha = 0x80 - 0x8F
-// 2 linha = 0xC0 - 0xCF
-
-// Fluxograma:
-// Esperar 30 ms
-// Funcao de configurar linhas e fonte {
-//      RS=0
-//      RW=0
-//      DB7=0
-//      DB6=0
-//      DB5=1
-//      DB4=1
-//      DB3=1 (2 line-mode)
-//      DB2=0 (5x8 font)
-//      DB1=x
-//      DB0=x
-// }
-// Esperar 39us
-// Funcao de configurar display {
-//      RS=0
-//      RW=0
-//      DB7=0
-//      DB6=0
-//      DB5=0
-//      DB4=0
-//      DB3=1
-//      DB2=1 (display on)
-//      DB1=1 (curson on)
-//      DB0=0 (blink off)
-// }
-// Enviar dado{
-//      RS=1
-//      RW=0
-//      DB7-DB0=dado em ASCII
-//}
-// Mudar cursor{
-//      RS=0
-//      RW=0
-//      DB7=1
-//      DB6-DB0=END (exemplo: 0x80 -> OB10000000 ; 0xC0 -> OB11000000)
-//}
-0100 / 0100 61 - 0110 / 0001 76 - 0111 / 0110 69 - 0110 / 1001
-
-                                                       void
-                                                       delay_s(void)
+void send_instruction(unsigned char command)
 {
-    unsigned int i;
-    for (i = 0; i < 90000; i++)
+    RS = 0;
+    RW = 0;
+    EN = 1;
+    porta_lcd = command;
+    EN = 0;
+    delay_ms(1);
+}
+
+void send_data(unsigned char data)
+{
+    RS = 1;
+    RW = 0;
+    EN = 1;
+    porta_lcd = data;
+    EN = 0;
+    delay_ms(1);
+
+    ++caracters_writed;
+
+    if (caracters_writed == 16)
     {
+        send_instruction(0B11000000); // vai para a segunda linha
     }
+    else if (caracters_writed == 32)
+    {
+        send_instruction(0B10000000); // vai para a primeira linha
+        caracters_writed = 0;
+    }
+}
+
+void delay_ms(char ms)
+{
+
+    unsigned int i;
+    for (; ms > 0; ms--)
+    {
+        for (i = 0; i < 135; i++)
+        {
+        }
+    }
+}
+
+void configure_ports()
+{
+    TRISCbits.TRISC5 = 0;
+    TRISCbits.TRISC6 = 0;
+    TRISCbits.TRISC7 = 0;
+
+    TRISD = 0B00000000;
+    ADCON1 = 0B00001111;
 }
 
 void configure()
 {
-    // delay_ms(200); // espera alimentação do lcd estabilizar (min 30 ms)
+    delay_ms(200);                // min(30ms)
+    send_instruction(0B00111000); // 2 linhas 5x8
+    send_instruction(0B00001110); // cursor
+    send_instruction(0B00000001); // limpa lcd
 }
 
 void main()
 {
+    configure_ports();
     configure();
     while (1)
     {
+        send_data('R');
+        send_data('A');
+        send_data('Q');
+        send_data('U');
+        send_data('E');
+        send_data('L');
+        send_instruction(0B10000000); // volta cursor pro começo
     }
 }
