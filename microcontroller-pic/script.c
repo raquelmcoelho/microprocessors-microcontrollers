@@ -3,46 +3,162 @@
 #define RS LATCbits.LATC5
 #define RW LATCbits.LATC6
 #define EN LATCbits.LATC7
-#define porta_lcd LATD
+#define DB LATD
 
-int caracters_writed = 0;
+typedef enum
+{
+    INSTRUCTION,
+    DATA
+} typeRS;
 
+typedef enum
+{
+    WRITE,
+    READ
+} typeRW;
+
+typedef enum
+{
+    LINE_1 = 0x80,
+    LINE_2 = 0xC0
+} lineDB;
+
+void configure_layout();
+void configure_display();
+void change_cursor(lineDB row, unsigned char col);
 void enable();
 void send_instruction(unsigned char command);
 void send_data(unsigned char data);
+void update_cursor();
+void delay_s();
 void delay_ms(char ms);
 void configure_ports();
 void configure();
 
+void configure_layout()
+{
+    enum
+    {
+        ONE_LINE_MODE,
+        TWO_LINE_MODE
+    } N = TWO_LINE_MODE;
+
+    enum
+    {
+        FONT_5X8,
+        FONT_5X11
+    } F = FONT_5X8;
+
+    // DB7 = 0;
+    // DB6 = 0;
+    // DB5 = 1;
+    // DB4 = 1;
+    // DB3 = N;
+    // DB2 = F;
+    // DB1 = X; // whatever
+    // DB0 = X; // whatever
+
+    unsigned char command = 0B00110000 | N << 3 | F << 2;
+    send_instruction(command);
+}
+
+void configure_display()
+{
+    enum
+    {
+        DISPLAY_OFF,
+        DISPLAY_ON
+    } D = DISPLAY_ON;
+
+    enum
+    {
+        CURSOR_OFF,
+        CURSOR_ON
+    } C = CURSOR_OFF;
+
+    enum
+    {
+        BLINK_OFF,
+        BLINK_ON
+    } B = BLINK_OFF;
+
+    // DB7 = 0;
+    // DB6 = 0;
+    // DB5 = 0;
+    // DB4 = 0;
+    // DB3 = 1;
+    // DB2 = D;
+    // DB1 = C;
+    // DB0 = B;
+
+    unsigned char command = 0B00001000 | D << 2 | C << 1 | B;
+    send_instruction(command);
+}
+
+void change_cursor(lineDB row, unsigned char col)
+{
+    // 1 linha = 0x80 - 0x8F -> OB10000000 - OB10001111
+    // 2 linha = 0xC0 - 0xCF -> OB11000000 - OB11001111
+
+    if (col > 0B1111)
+        return;
+
+    send_instruction((unsigned char)row + col);
+}
+
+void enable()
+{
+    // E-transicao negativa (1->0)
+    EN = 1;
+    EN = 0;
+    delay_ms(1); // min(39us) or wait till RW=READ  say it's okay to send another think
+
+    /*
+    RW = READ
+    while(busy) {}
+    RW = WRITE
+    */
+}
+
 void send_instruction(unsigned char command)
 {
-    RS = 0;
-    RW = 0;
-    EN = 1;
-    porta_lcd = command;
-    EN = 0;
-    delay_ms(1);
+    RS = INSTRUCTION;
+    RW = WRITE;
+    DB = command;
+    enable();
 }
 
 void send_data(unsigned char data)
 {
-    RS = 1;
-    RW = 0;
-    EN = 1;
-    porta_lcd = data;
-    EN = 0;
-    delay_ms(1);
 
+    RS = DATA;
+    RW = WRITE;
+    DB = data;
+    enable();
+
+    // update_cursor();
+}
+
+void update_cursor()
+{
+    static char caracters_writed = 0;
     ++caracters_writed;
 
     if (caracters_writed == 16)
     {
-        send_instruction(0B11000000); // vai para a segunda linha
+        change_cursor(LINE_2, 0);
     }
     else if (caracters_writed == 32)
     {
-        send_instruction(0B10000000); // vai para a primeira linha
+        change_cursor(LINE_1, 0);
         caracters_writed = 0;
+    }
+}
+void delay_s()
+{
+    unsigned int i;
+    for (i = 0; i < 90000; i++)
+    {
     }
 }
 
@@ -52,7 +168,7 @@ void delay_ms(char ms)
     unsigned int i;
     for (; ms > 0; ms--)
     {
-        for (i = 0; i < 135; i++)
+        for (i = 0; i < 1500; i++)
         {
         }
     }
@@ -70,10 +186,9 @@ void configure_ports()
 
 void configure()
 {
-    delay_ms(200);                // min(30ms)
-    send_instruction(0B00111000); // 2 linhas 5x8
-    send_instruction(0B00001110); // cursor
-    send_instruction(0B00000001); // limpa lcd
+    delay_ms(200); // min(30ms)
+    configure_layout();
+    configure_display();
 }
 
 void main()
@@ -88,6 +203,6 @@ void main()
         send_data('U');
         send_data('E');
         send_data('L');
-        send_instruction(0B10000000); // volta cursor pro começo
+        change_cursor(LINE_1, 0);
     }
 }

@@ -3,14 +3,6 @@
 #define RS LATCbits.LATC5
 #define RW LATCbits.LATC6
 #define EN LATCbits.LATC7
-#define DB7 LATDbits.LATD7
-#define DB6 LATDbits.LATD6
-#define DB5 LATDbits.LATD5
-#define DB4 LATDbits.LATD4
-#define DB3 LATDbits.LATD3
-#define DB2 LATDbits.LATD2
-#define DB1 LATDbits.LATD1
-#define DB0 LATDbits.LATD0
 #define DB LATD
 
 typedef enum
@@ -31,29 +23,17 @@ typedef enum
     LINE_2 = 0xC0
 } lineDB;
 
-void enable();
 void configure_layout();
 void configure_display();
-void send_data(unsigned char data);
 void change_cursor(lineDB row, unsigned char col);
+void enable();
+void send_instruction(unsigned char command);
+void send_data(unsigned char data);
+void update_cursor();
 void delay_s();
 void delay_ms(char ms);
 void configure_ports();
 void configure();
-
-void enable()
-{
-    // E-transicao negativa (1->0)
-    EN = 1;
-    EN = 0;
-    delay_ms(1); // min(39us) or wait till RW=READ  say it's okay to send another think
-
-    /*
-    RW = READ
-    while(busy) {}
-    RW = WRITE
-    */
-}
 
 void configure_layout()
 {
@@ -69,20 +49,19 @@ void configure_layout()
         FONT_5X11
     } F = FONT_5X8;
 
-    RS = INSTRUCTION;
-    RW = WRITE;
-    DB7 = 0;
-    DB6 = 0;
-    DB5 = 1;
-    DB4 = 1;
-    DB3 = N;
-    DB2 = F;
-    DB1 = 0; // whatever
-    DB0 = 0; // whatever
+    // DB7 = 0;
+    // DB6 = 0;
+    // DB5 = 1;
+    // DB4 = 1;
+    // DB3 = N;
+    // DB2 = F;
+    // DB1 = X; // whatever
+    // DB0 = X; // whatever
 
-    enable();
+    unsigned char command = 0B00110000 | N << 3 | F << 2;
+    send_instruction(command);
 }
-// Esperar 39us
+
 void configure_display()
 {
     enum
@@ -103,44 +82,78 @@ void configure_display()
         BLINK_ON
     } B = BLINK_OFF;
 
+    // DB7 = 0;
+    // DB6 = 0;
+    // DB5 = 0;
+    // DB4 = 0;
+    // DB3 = 1;
+    // DB2 = D;
+    // DB1 = C;
+    // DB0 = B;
+
+    unsigned char command = 0B00001000 | D << 2 | C << 1 | B;
+    send_instruction(command);
+}
+
+void change_cursor(lineDB row, unsigned char col)
+{
+    // 1 linha = 0x80 - 0x8F -> OB10000000 - OB10001111
+    // 2 linha = 0xC0 - 0xCF -> OB11000000 - OB11001111
+
+    if (col > 0B1111)
+        return;
+
+    send_instruction((unsigned char)row + col);
+}
+
+void enable()
+{
+    // E-transicao negativa (1->0)
+    EN = 1;
+    EN = 0;
+    delay_ms(1); // min(39us) or wait till RW=READ  say it's okay to send another think
+
+    /*
+    RW = READ
+    while(busy) {}
+    RW = WRITE
+    */
+}
+
+void send_instruction(unsigned char command)
+{
     RS = INSTRUCTION;
     RW = WRITE;
-    DB7 = 0;
-    DB6 = 0;
-    DB5 = 0;
-    DB4 = 0;
-    DB3 = 1;
-    DB2 = D;
-    DB1 = C;
-    DB0 = B;
-
+    DB = command;
     enable();
 }
 
 void send_data(unsigned char data)
 {
+
     RS = DATA;
     RW = WRITE;
     DB = data;
     enable();
+
+    // update_cursor();
 }
 
-void change_cursor(lineDB row, unsigned char col)
+void update_cursor()
 {
-    // 1 linha = 0x80 - 0x8F
-    // 2 linha = 0xC0 - 0xCF
+    static char caracters_writed = 0;
+    ++caracters_writed;
 
-    if (col > 0B1111)
-        return;
-
-    RS = INSTRUCTION;
-    RW = WRITE;
-    DB = (unsigned char)row + col;
-    enable();
-
-    // (exemplo : 0x80->OB10000000; 0xC0->OB11000000);
+    if (caracters_writed == 16)
+    {
+        change_cursor(LINE_2, 0);
+    }
+    else if (caracters_writed == 32)
+    {
+        change_cursor(LINE_1, 0);
+        caracters_writed = 0;
+    }
 }
-
 void delay_s()
 {
     unsigned int i;
@@ -166,15 +179,6 @@ void configure_ports()
     TRISCbits.TRISC5 = 0;
     TRISCbits.TRISC6 = 0;
     TRISCbits.TRISC7 = 0;
-
-    TRISDbits.TRISD7 = 0;
-    TRISDbits.TRISD6 = 0;
-    TRISDbits.TRISD5 = 0;
-    TRISDbits.TRISD4 = 0;
-    TRISDbits.TRISD3 = 0;
-    TRISDbits.TRISD2 = 0;
-    TRISDbits.TRISD1 = 0;
-    TRISDbits.TRISD0 = 0;
 
     TRISD = 0B00000000;
     ADCON1 = 0B00001111;
