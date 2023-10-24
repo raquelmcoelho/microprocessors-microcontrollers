@@ -23,6 +23,42 @@ typedef enum
     LINE_2 = 0xC0
 } lineDB;
 
+const enum
+{
+    MODE_4_BIT,
+    MODE_8_BIT
+} DL = MODE_4_BIT;
+
+const enum
+{
+    ONE_LINE_MODE,
+    TWO_LINE_MODE
+} N = TWO_LINE_MODE;
+
+const enum
+{
+    FONT_5X8,
+    FONT_5X11
+} F = FONT_5X8;
+
+const enum
+{
+    DISPLAY_OFF,
+    DISPLAY_ON
+} D = DISPLAY_ON;
+
+enum
+{
+    CURSOR_OFF,
+    CURSOR_ON
+} C = CURSOR_OFF;
+
+const enum
+{
+    BLINK_OFF,
+    BLINK_ON
+} B = BLINK_OFF;
+
 void configure_layout();
 void configure_display();
 void change_cursor(lineDB row, unsigned char col);
@@ -37,51 +73,21 @@ void configure();
 
 void configure_layout()
 {
-    enum
-    {
-        ONE_LINE_MODE,
-        TWO_LINE_MODE
-    } N = TWO_LINE_MODE;
-
-    enum
-    {
-        FONT_5X8,
-        FONT_5X11
-    } F = FONT_5X8;
-
     // DB7 = 0;
     // DB6 = 0;
     // DB5 = 1;
-    // DB4 = 1;
+    // DB4 = DL;
     // DB3 = N;
     // DB2 = F;
     // DB1 = X; // whatever
     // DB0 = X; // whatever
 
-    unsigned char command = 0B00110000 | N << 3 | F << 2;
+    unsigned char command = 0B00100000 | DL << 4 | N << 3 | F << 2;
     send_instruction(command);
 }
 
 void configure_display()
 {
-    enum
-    {
-        DISPLAY_OFF,
-        DISPLAY_ON
-    } D = DISPLAY_ON;
-
-    enum
-    {
-        CURSOR_OFF,
-        CURSOR_ON
-    } C = CURSOR_OFF;
-
-    enum
-    {
-        BLINK_OFF,
-        BLINK_ON
-    } B = BLINK_OFF;
-
     // DB7 = 0;
     // DB6 = 0;
     // DB5 = 0;
@@ -126,6 +132,11 @@ void send_instruction(unsigned char command)
     RW = WRITE;
     DB = command;
     enable();
+
+    if (DL == MODE_4_BIT) {
+        DB = command << 4;
+        enable();
+    }
 }
 
 void send_data(unsigned char data)
@@ -186,7 +197,7 @@ void configure_ports()
 
 void configure()
 {
-    delay_ms(200); // min(30ms)
+    delay_ms(200); // min(30ms) + min(40ms)
     configure_layout();
     configure_display();
 }
