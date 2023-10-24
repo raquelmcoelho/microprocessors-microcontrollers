@@ -63,8 +63,7 @@ void configure_layout();
 void configure_display();
 void change_cursor(lineDB row, unsigned char col);
 void enable();
-void send_instruction(unsigned char command);
-void send_data(unsigned char data);
+void send_instruction(typeRS type, unsigned char data);
 void update_cursor();
 void delay_s();
 void delay_ms(char ms);
@@ -83,7 +82,7 @@ void configure_layout()
     // DB0 = X; // whatever
 
     unsigned char command = 0B00100000 | DL << 4 | N << 3 | F << 2;
-    send_instruction(command);
+    send(INSTRUCTION, command);
 }
 
 void configure_display()
@@ -98,7 +97,7 @@ void configure_display()
     // DB0 = B;
 
     unsigned char command = 0B00001000 | D << 2 | C << 1 | B;
-    send_instruction(command);
+    send(INSTRUCTION, command);
 }
 
 void change_cursor(lineDB row, unsigned char col)
@@ -109,7 +108,7 @@ void change_cursor(lineDB row, unsigned char col)
     if (col > 0B1111)
         return;
 
-    send_instruction((unsigned char)row + col);
+    send(INSTRUCTION, (unsigned char)row + col);
 }
 
 void enable()
@@ -126,9 +125,9 @@ void enable()
     */
 }
 
-void send_instruction(unsigned char command)
+void send(typeRS type, unsigned char command)
 {
-    RS = INSTRUCTION;
+    RS = type;
     RW = WRITE;
     DB = command;
     enable();
@@ -137,17 +136,6 @@ void send_instruction(unsigned char command)
         DB = command << 4;
         enable();
     }
-}
-
-void send_data(unsigned char data)
-{
-
-    RS = DATA;
-    RW = WRITE;
-    DB = data;
-    enable();
-
-    // update_cursor();
 }
 
 void update_cursor()
@@ -208,12 +196,12 @@ void main()
     configure();
     while (1)
     {
-        send_data('R');
-        send_data('A');
-        send_data('Q');
-        send_data('U');
-        send_data('E');
-        send_data('L');
+        send(DATA, 'R');
+        send(DATA, 'A');
+        send(DATA, 'Q');
+        send(DATA, 'U');
+        send(DATA, 'E');
+        send(DATA, 'L');
         change_cursor(LINE_1, 0);
     }
 }
