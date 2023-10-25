@@ -1,9 +1,14 @@
 #include <p18f4520.h>
 
-#define RS LATCbits.LATC5
-#define RW LATCbits.LATC6
-#define EN LATCbits.LATC7
-#define DB LATD
+#define RS1 LATCbits.LATC5
+#define RW1 LATCbits.LATC6
+#define EN1 LATCbits.LATC7
+#define DB1 LATD
+
+#define RS2 LATAbits.LATA2
+#define RW2 LATAbits.LATA1
+#define EN2 LATAbits.LATA0
+#define DB2 LATB
 
 typedef enum
 {
@@ -22,6 +27,12 @@ typedef enum
     LINE_1 = 0x80,
     LINE_2 = 0xC0
 } lineDB;
+
+typedef enum
+{
+    LCD1,
+    LCD2
+} LCD;
 
 const enum {
     MODE_4_BIT,
@@ -53,6 +64,8 @@ const enum {
     BLINK_OFF,
     BLINK_ON
 } B = BLINK_OFF;
+
+LCD lcd;
 
 void configure_layout();
 void configure_display();
@@ -102,23 +115,46 @@ void change_cursor(unsigned char row, unsigned char col)
 void enable()
 {
     // E-transicao negativa (1->0)
-    EN = 1;
-    EN = 0;
+    if (lcd == LCD1)
+    {
+        EN1 = 1;
+        EN1 = 0;
+    }
+    else if (lcd == LCD2)
+    {
+        EN2 = 1;
+        EN2 = 0;
+    }
     delay_ms(1);
 }
 
 void send(typeRS type, unsigned char command)
 {
-
-    RS = type;
-    RW = WRITE;
-    DB = command;
-    enable();
-
-    if (DL == MODE_4_BIT)
+    if (lcd == LCD1)
     {
-        DB = command << 4;
+        RS1 = type;
+        RW1 = WRITE;
+        DB1 = command;
         enable();
+
+        if (DL == MODE_4_BIT)
+        {
+            DB1 = command << 4;
+            enable();
+        }
+    }
+    else if (lcd == LCD2)
+    {
+        RS2 = type;
+        RW2 = WRITE;
+        DB2 = command;
+        enable();
+
+        if (DL == MODE_4_BIT)
+        {
+            DB2 = command << 4;
+            enable();
+        }
     }
 }
 
@@ -166,18 +202,25 @@ void main()
 {
 
     configure_ports();
+    lcd = LCD1;
+    configure();
+    lcd = LCD2;
     configure();
 
     while (1)
     {
-        change_cursor(0, 0x40);
-        send(INSTRUCTION, 0B11111);
-        send(INSTRUCTION, 0B10001);
-        send(INSTRUCTION, 0B10001);
-        send(INSTRUCTION, 0B10101);
-        send(INSTRUCTION, 0B10001);
-        send(INSTRUCTION, 0B10001);
-        send(INSTRUCTION, 0B10001);
-        send(INSTRUCTION, 0B11111);
+        lcd = LCD1;
+        send(DATA, 'O');
+        send(DATA, 'L');
+        send(DATA, 'A');
+        change_cursor(LINE_1, 0);
+
+        lcd = LCD2;
+        send(DATA, 'H');
+        send(DATA, 'E');
+        send(DATA, 'L');
+        send(DATA, 'L');
+        send(DATA, 'O');
+        change_cursor(LINE_1, 0);
     }
 }
