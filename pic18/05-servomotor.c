@@ -14,21 +14,8 @@ void servo_tilt(unsigned char);
 void checar_pan(void);
 void checar_tilt(void);
 void delay_ms(int);
-void delay_s(int);
-void delay_us(int); // n�o resolvido
 int ang1 = 30;
 int ang2 = 30;
-
-void delay_s(int s)
-{
-	unsigned long int i;
-	for (; s > 0; s--)
-	{
-		for (i = 0; i < 83333; i++)
-		{
-		};
-	}
-}
 
 void delay_ms(int ms)
 
@@ -39,14 +26,6 @@ void delay_ms(int ms)
 		for (i = 0; i < 529; i++)
 		{
 		} // tempo de loop = 1ms
-	}
-}
-
-void delay_us(int us) // funciona a partir de 10us
-{
-	unsigned char i;
-	for (i = 0; i < 28; i++)
-	{
 	}
 }
 

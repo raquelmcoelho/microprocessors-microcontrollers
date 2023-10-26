@@ -59,8 +59,6 @@ void configure_display();
 void change_cursor(unsigned char row, unsigned char col);
 void enable();
 void send(typeRS type, unsigned char data);
-void update_cursor();
-void delay_s();
 void delay_ms(unsigned long long int ms);
 void configure_ports();
 void configure();
@@ -124,29 +122,6 @@ void send(typeRS type, unsigned char command)
     {
         DB = command << 4;
         enable();
-    }
-}
-
-void update_cursor()
-{
-    static char caracters_writed = 0;
-    ++caracters_writed;
-
-    if (caracters_writed == 16)
-    {
-        change_cursor(LINE_2, 0);
-    }
-    else if (caracters_writed == 32)
-    {
-        change_cursor(LINE_1, 0);
-        caracters_writed = 0;
-    }
-}
-void delay_s()
-{
-    unsigned int i;
-    for (i = 0; i < 90000; i++)
-    {
     }
 }
 

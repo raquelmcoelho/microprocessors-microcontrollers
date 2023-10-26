@@ -73,7 +73,6 @@ void clear_display();
 void change_cursor(unsigned char row, unsigned char col);
 void enable();
 void send(typeRS type, unsigned char data);
-void update_cursor();
 void delay_ms(unsigned long long int ms);
 void configure_ports();
 void configure();
