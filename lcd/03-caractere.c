@@ -26,7 +26,7 @@ typedef enum
 const enum {
     MODE_4_BIT,
     MODE_8_BIT
-} DL = MODE_4_BIT;
+} DL = MODE_8_BIT;
 
 const enum {
     ONE_LINE_MODE,
@@ -61,10 +61,10 @@ void change_cursor(unsigned char row, unsigned char col);
 void enable();
 void send(typeRS type, unsigned char data);
 void update_cursor();
-void delay_s();
-void delay_ms(char ms);
+void delay_ms(unsigned long long int ms);
 void configure_ports();
 void configure();
+void create_caracters();
 
 void configure_layout()
 {
@@ -105,7 +105,7 @@ void enable()
     // E-transicao negativa (1->0)
     EN = 1;
     EN = 0;
-    delay_ms(1);
+    delay_ms(10);
 }
 
 void send(typeRS type, unsigned char command)
@@ -123,21 +123,13 @@ void send(typeRS type, unsigned char command)
     }
 }
 
-void delay_s()
-{
-    unsigned int i;
-    for (i = 0; i < 90000; i++)
-    {
-    }
-}
-
-void delay_ms(char ms)
+void delay_ms(unsigned long long int ms)
 {
 
-    unsigned int i;
+    unsigned char i;
     for (; ms > 0; ms--)
     {
-        for (i = 0; i < 1500; i++)
+        for (i = 0; i < 145; i++)
         {
         }
     }
@@ -149,12 +141,7 @@ void configure_ports()
     TRISCbits.TRISC6 = 0;
     TRISCbits.TRISC7 = 0;
 
-    TRISAbits.TRISA2 = 0;
-    TRISAbits.TRISA1 = 0;
-    TRISAbits.TRISA0 = 0;
-
     TRISD = 0B00000000;
-    TRISB = 0B00000000;
     ADCON1 = 0B00001111;
 }
 
@@ -171,22 +158,110 @@ void configure()
     clear_display();
 }
 
+void create_caracters()
+{
+    send(INSTRUCTION, 0x40); // goto address 0x40
+    send(DATA, 0B01110);
+    send(DATA, 0B11111);
+    send(DATA, 0B11111);
+    send(DATA, 0B11111);
+    send(DATA, 0B11111);
+    send(DATA, 0B11111);
+    send(DATA, 0B01110);
+
+    send(INSTRUCTION, 0x48); // goto address 0x40
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+    send(DATA, 0B11111);
+    send(DATA, 0B01000);
+    send(DATA, 0B00100);
+    send(DATA, 0B00010);
+    send(DATA, 0B00001);
+
+    send(INSTRUCTION, 0x50); // goto address 0x40
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+    send(DATA, 0B11111);
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+    send(DATA, 0B11111);
+
+    send(INSTRUCTION, 0x58); // goto address 0x40
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+    send(DATA, 0B11111);
+    send(DATA, 0B00010);
+    send(DATA, 0B00100);
+    send(DATA, 0B01000);
+    send(DATA, 0B10000);
+
+    send(INSTRUCTION, 0x60); // goto address 0x40
+    send(DATA, 0B00000);
+    send(DATA, 0B11011);
+    send(DATA, 0B11111);
+    send(DATA, 0B01110);
+    send(DATA, 0B00100);
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+
+    send(INSTRUCTION, 0x68);
+    send(DATA, 0B00000);
+    send(DATA, 0B01010);
+    send(DATA, 0B10101);
+    send(DATA, 0B01010);
+    send(DATA, 0B10101);
+    send(DATA, 0B00000);
+    send(DATA, 0B00000);
+}
+
 void main()
 {
 
     configure_ports();
     configure();
+    create_caracters();
 
     while (1)
     {
-        change_cursor(0, 0x40);
-        send(DATA, 0B11111);
-        send(DATA, 0B10001);
-        send(DATA, 0B10001);
-        send(DATA, 0B10101);
-        send(DATA, 0B10001);
-        send(DATA, 0B10001);
-        send(DATA, 0B10001);
-        send(DATA, 0B11111);
+        change_cursor(LINE_1, 3); // left eye
+        send(DATA, 0);
+        change_cursor(LINE_1, 12); // right eye
+        send(DATA, 0);
+        change_cursor(LINE_1, 6); // left smile
+        send(DATA, 1);
+        change_cursor(LINE_1, 7); // middle smile
+        send(DATA, 2);
+        change_cursor(LINE_1, 8); // middle smile
+        send(DATA, 2);
+        change_cursor(LINE_1, 9); // right smile
+        send(DATA, 3);
+        change_cursor(LINE_1, 1); // left blush
+        send(DATA, 5);
+        change_cursor(LINE_1, 14); // right blush
+        send(DATA, 5);
+        delay_ms(800);
+
+        change_cursor(LINE_1, 1); // clear left blush
+        send(DATA, ' ');
+        change_cursor(LINE_1, 14); // clear right blush
+        send(DATA, ' ');
+        delay_ms(100);
+
+        change_cursor(LINE_1, 14); // heart
+        send(DATA, 4);
+        delay_ms(800);
+        clear_display();
+
+        change_cursor(LINE_2, 4); // left eye
+        send(DATA, 0);
+        change_cursor(LINE_2, 11); // right eye
+        send(DATA, 0);
+        change_cursor(LINE_2, 7); // left smile
+        send(DATA, 1);
+        change_cursor(LINE_2, 8); // right smile
+        send(DATA, 3);
+        delay_ms(800);
+        clear_display();
     }
 }

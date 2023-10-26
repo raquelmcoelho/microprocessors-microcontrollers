@@ -74,7 +74,7 @@ void change_cursor(unsigned char row, unsigned char col);
 void enable();
 void send(typeRS type, unsigned char data);
 void update_cursor();
-void delay_ms(char ms);
+void delay_ms(unsigned long long int ms);
 void configure_ports();
 void configure();
 
@@ -158,13 +158,13 @@ void send(typeRS type, unsigned char command)
     }
 }
 
-void delay_ms(char ms)
+void delay_ms(unsigned long long int ms)
 {
 
-    unsigned int i;
+    unsigned char i;
     for (; ms > 0; ms--)
     {
-        for (i = 0; i < 1500; i++)
+        for (i = 0; i < 145; i++)
         {
         }
     }

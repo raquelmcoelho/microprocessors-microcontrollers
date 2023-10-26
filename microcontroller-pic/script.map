@@ -1,23 +1,23 @@
 MPLINK 5.00, LINKER
-Linker Map File - Created Wed Oct 25 10:52:42 2023
+Linker Map File - Created Thu Oct 26 16:00:03 2023
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                _entry_scn       code   0x000000    program   0x000006
                    .cinit    romdata   0x000006    program   0x00000e
-           .code_script.o       code   0x000014    program   0x00021c
-               _cinit_scn       code   0x000230    program   0x00009e
-                    .code       code   0x0002ce    program   0x000020
-             _startup_scn       code   0x0002ee    program   0x00001c
-           .code___init.o       code   0x00030a    program   0x000002
-         .romdata_c018i.o    romdata   0x00030c    program   0x000000
-        .idata_script.o_i    romdata   0x00030c    program   0x000006
-        .romdata_script.o    romdata   0x00030c    program   0x000000
-        .romdata___init.o    romdata   0x00030c    program   0x000000
-         .idata_c018i.o_i    romdata   0x000312    program   0x000000
-            .code_c018i.o       code   0x000312    program   0x000000
-        .idata___init.o_i    romdata   0x000312    program   0x000000
+           .code_script.o       code   0x000014    program   0x000630
+               _cinit_scn       code   0x000644    program   0x00009e
+                    .code       code   0x0006e2    program   0x000020
+             _startup_scn       code   0x000702    program   0x00001c
+           .code___init.o       code   0x00071e    program   0x000002
+         .romdata_c018i.o    romdata   0x000720    program   0x000000
+        .idata_script.o_i    romdata   0x000720    program   0x000006
+        .romdata_script.o    romdata   0x000720    program   0x000000
+        .romdata___init.o    romdata   0x000720    program   0x000000
+         .idata_c018i.o_i    romdata   0x000726    program   0x000000
+            .code_c018i.o       code   0x000726    program   0x000000
+        .idata___init.o_i    romdata   0x000726    program   0x000000
                 MATH_DATA      udata   0x000000       data   0x000002
                  .tmpdata      udata   0x000002       data   0x000002
            .udata_c018i.o      udata   0x000080       data   0x00000a
@@ -34,8 +34,8 @@ Linker Map File - Created Wed Oct 25 10:52:42 2023
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000311      
-            786 out of 33048 program addresses used, program memory utilization is 2%
+                            0x000000    0x000725      
+            1830 out of 33048 program addresses used, program memory utilization is 5%
 
 
 
@@ -43,33 +43,34 @@ Linker Map File - Created Wed Oct 25 10:52:42 2023
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
        ___return_lbl00000   0x000004    program     static                          
-       ___return_lbl00001   0x000308    program     static                          
-       ___return_lbl00002   0x0002cc    program     static                          
-                   __init   0x00030a    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
-            __zero_memory   0x0002ce    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                _do_cinit   0x000230    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+       ___return_lbl00001   0x00071c    program     static                          
+       ___return_lbl00002   0x0006e0    program     static                          
+                   __init   0x00071e    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
+            __zero_memory   0x0006e2    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                _do_cinit   0x000644    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
                    _entry   0x000000    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                 _startup   0x0002ee    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                 _startup   0x000702    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
             change_cursor   0x000096    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
             clear_display   0x000088    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                compare_l   0x0002e4    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                configure   0x000184    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                compare_l   0x0006f8    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                configure   0x00018e    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
         configure_display   0x000052    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
          configure_layout   0x000014    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-          configure_ports   0x00016e    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                copy_loop   0x0002a2    program     static                          
-            copy_one_byte   0x0002a8    program     static                          
-                 delay_ms   0x00010c    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     done   0x0002cc    program     static                          
-             done_copying   0x0002b6    program     static                          
+          configure_ports   0x000180    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                copy_loop   0x0006b6    program     static                          
+            copy_one_byte   0x0006bc    program     static                          
+         create_caracters   0x0001d2    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                 delay_ms   0x000118    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                     done   0x0006e0    program     static                          
+             done_copying   0x0006ca    program     static                          
                    enable   0x0000c8    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     loop   0x0002fe    program     static                          
-                   loop_h   0x0002dc    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_l   0x0002e6    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                     main   0x0001bc    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     send   0x0000d6    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     test   0x00024a    program     static                          
-               zero_block   0x0002dc    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                     loop   0x000712    program     static                          
+                   loop_h   0x0006f0    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_l   0x0006fa    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                     main   0x000448    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                     send   0x0000e2    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                     test   0x00065e    program     static                          
+               zero_block   0x0006f0    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADCON0   0x000fc2       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                ADCON0bits   0x000fc2       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
                    ADCON1   0x000fc1       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
@@ -265,27 +266,28 @@ Linker Map File - Created Wed Oct 25 10:52:42 2023
             clear_display   0x000088    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
             change_cursor   0x000096    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
                    enable   0x0000c8    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     send   0x0000d6    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                 delay_ms   0x00010c    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-          configure_ports   0x00016e    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                configure   0x000184    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                     main   0x0001bc    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
-                _do_cinit   0x000230    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                     test   0x00024a    program     static                          
-                copy_loop   0x0002a2    program     static                          
-            copy_one_byte   0x0002a8    program     static                          
-             done_copying   0x0002b6    program     static                          
-                     done   0x0002cc    program     static                          
-       ___return_lbl00002   0x0002cc    program     static                          
-            __zero_memory   0x0002ce    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-               zero_block   0x0002dc    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_h   0x0002dc    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                compare_l   0x0002e4    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                   loop_l   0x0002e6    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
-                 _startup   0x0002ee    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
-                     loop   0x0002fe    program     static                          
-       ___return_lbl00001   0x000308    program     static                          
-                   __init   0x00030a    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
+                     send   0x0000e2    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                 delay_ms   0x000118    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+          configure_ports   0x000180    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                configure   0x00018e    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+         create_caracters   0x0001d2    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                     main   0x000448    program     extern C:\Users\Raquel\Projetos\microprocessors-microcontrollers\microcontroller-pic\script.c
+                _do_cinit   0x000644    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                     test   0x00065e    program     static                          
+                copy_loop   0x0006b6    program     static                          
+            copy_one_byte   0x0006bc    program     static                          
+             done_copying   0x0006ca    program     static                          
+                     done   0x0006e0    program     static                          
+       ___return_lbl00002   0x0006e0    program     static                          
+            __zero_memory   0x0006e2    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+               zero_block   0x0006f0    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_h   0x0006f0    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                compare_l   0x0006f8    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                   loop_l   0x0006fa    program     static E:\3.46\pic18-lt\cxx-framework\src\traditional\proc\p18f452.asm
+                 _startup   0x000702    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\startup\c018i.c
+                     loop   0x000712    program     static                          
+       ___return_lbl00001   0x00071c    program     static                          
+                   __init   0x00071e    program     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\stdclib\__init.c
                      SIGN   0x000000       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
             __FPFLAGSbits   0x000001       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
                 __FPFLAGS   0x000001       data     extern E:\3.46\pic18-lt\cxx-framework\src\traditional\math\cmath18.asm
