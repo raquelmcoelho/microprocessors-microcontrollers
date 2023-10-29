@@ -43,7 +43,7 @@ const enum {
     DISPLAY_ON
 } D = DISPLAY_ON;
 
-enum
+const enum
 {
     CURSOR_OFF,
     CURSOR_ON
@@ -71,6 +71,10 @@ void configure_layout()
     //  0  |  0  |  1  | DL  |  N  |  F  |  X  |  X
 
     unsigned char command = 0B00100000 | DL << 4 | N << 3 | F << 2;
+    
+    if (DL == MODE_4_BIT)
+        send(INSTRUCTION, 0B00000010);
+
     send(INSTRUCTION, command);
 }
 
@@ -80,6 +84,10 @@ void configure_display()
     //  0  |  0  |  0  |  0  |  1  |  D  |  C  |  B
 
     unsigned char command = 0B00001000 | D << 2 | C << 1 | B;
+
+    if (DL == MODE_4_BIT)
+        send(INSTRUCTION, 0B00000100 | C << 1);
+        
     send(INSTRUCTION, command);
 }
 
@@ -148,18 +156,14 @@ void configure()
 {
     delay_ms(200); // min(30ms) + min(40ms)
 
-    if (DL == MODE_4_BIT)
-        send(INSTRUCTION, 0B00000010);
     configure_layout();
     configure_display();
-    if (DL == MODE_4_BIT)
-        send(INSTRUCTION, 0B00000100 | C << 1);
     clear_display();
 }
 
 void create_caracters()
 {
-    send(INSTRUCTION, 0x40); // goto address 0x40
+    send(INSTRUCTION, 0x40);
     send(DATA, 0B01110);
     send(DATA, 0B11111);
     send(DATA, 0B11111);
@@ -168,7 +172,7 @@ void create_caracters()
     send(DATA, 0B11111);
     send(DATA, 0B01110);
 
-    send(INSTRUCTION, 0x48); // goto address 0x40
+    send(INSTRUCTION, 0x48);
     send(DATA, 0B00000);
     send(DATA, 0B00000);
     send(DATA, 0B11111);
@@ -177,7 +181,7 @@ void create_caracters()
     send(DATA, 0B00010);
     send(DATA, 0B00001);
 
-    send(INSTRUCTION, 0x50); // goto address 0x40
+    send(INSTRUCTION, 0x50);
     send(DATA, 0B00000);
     send(DATA, 0B00000);
     send(DATA, 0B11111);
@@ -186,7 +190,7 @@ void create_caracters()
     send(DATA, 0B00000);
     send(DATA, 0B11111);
 
-    send(INSTRUCTION, 0x58); // goto address 0x40
+    send(INSTRUCTION, 0x58);
     send(DATA, 0B00000);
     send(DATA, 0B00000);
     send(DATA, 0B11111);
@@ -195,7 +199,7 @@ void create_caracters()
     send(DATA, 0B01000);
     send(DATA, 0B10000);
 
-    send(INSTRUCTION, 0x60); // goto address 0x40
+    send(INSTRUCTION, 0x60); 
     send(DATA, 0B00000);
     send(DATA, 0B11011);
     send(DATA, 0B11111);
@@ -223,6 +227,17 @@ void main()
 
     while (1)
     {
+        change_cursor(LINE_2, 4); // left eye
+        send(DATA, 0);
+        change_cursor(LINE_2, 11); // right eye
+        send(DATA, 0);
+        change_cursor(LINE_2, 7); // left smile
+        send(DATA, 1);
+        change_cursor(LINE_2, 8); // right smile
+        send(DATA, 3);
+        delay_ms(800);
+        clear_display();
+
         change_cursor(LINE_1, 3); // left eye
         send(DATA, 0);
         change_cursor(LINE_1, 12); // right eye
@@ -239,27 +254,6 @@ void main()
         send(DATA, 5);
         change_cursor(LINE_1, 14); // right blush
         send(DATA, 5);
-        delay_ms(800);
-
-        change_cursor(LINE_1, 1); // clear left blush
-        send(DATA, ' ');
-        change_cursor(LINE_1, 14); // clear right blush
-        send(DATA, ' ');
-        delay_ms(100);
-
-        change_cursor(LINE_1, 14); // heart
-        send(DATA, 4);
-        delay_ms(800);
-        clear_display();
-
-        change_cursor(LINE_2, 4); // left eye
-        send(DATA, 0);
-        change_cursor(LINE_2, 11); // right eye
-        send(DATA, 0);
-        change_cursor(LINE_2, 7); // left smile
-        send(DATA, 1);
-        change_cursor(LINE_2, 8); // right smile
-        send(DATA, 3);
         delay_ms(800);
         clear_display();
     }

@@ -12,6 +12,11 @@
 
 typedef enum
 {
+    LCD1,
+    LCD2
+} LCD;
+typedef enum
+{
     INSTRUCTION,
     DATA
 } typeRS;
@@ -27,12 +32,6 @@ typedef enum
     LINE_1 = 0x80,
     LINE_2 = 0xC0
 } lineDB;
-
-typedef enum
-{
-    LCD1,
-    LCD2
-} LCD;
 
 const enum {
     MODE_4_BIT,
@@ -54,7 +53,7 @@ const enum {
     DISPLAY_ON
 } D = DISPLAY_ON;
 
-enum
+const enum
 {
     CURSOR_OFF,
     CURSOR_ON
@@ -83,6 +82,10 @@ void configure_layout()
     //  0  |  0  |  1  | DL  |  N  |  F  |  X  |  X
 
     unsigned char command = 0B00100000 | DL << 4 | N << 3 | F << 2;
+    
+    if (DL == MODE_4_BIT)
+        send(INSTRUCTION, 0B00000010);
+
     send(INSTRUCTION, command);
 }
 
@@ -92,6 +95,10 @@ void configure_display()
     //  0  |  0  |  0  |  0  |  1  |  D  |  C  |  B
 
     unsigned char command = 0B00001000 | D << 2 | C << 1 | B;
+
+    if (DL == MODE_4_BIT)
+        send(INSTRUCTION, 0B00000100 | C << 1);
+        
     send(INSTRUCTION, command);
 }
 
@@ -188,12 +195,8 @@ void configure()
 {
     delay_ms(200); // min(30ms) + min(40ms)
 
-    if (DL == MODE_4_BIT)
-        send(INSTRUCTION, 0B00000010);
     configure_layout();
     configure_display();
-    if (DL == MODE_4_BIT)
-        send(INSTRUCTION, 0B00000100 | C << 1);
     clear_display();
 }
 
