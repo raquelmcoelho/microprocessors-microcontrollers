@@ -1,143 +1,106 @@
-# Microprocessors & Microcontrollers - Proteus Projects
+# Microprocessors & Microcontrollers
 
-Projetos práticos e máquinas de estados desenvolvidos na disciplina de Microprocessadores e Microcontroladores (IFCE). Todas as soluções foram modeladas e simuladas no software Proteus ISIS, utilizando amplamente o componente virtual **Pattern Generator** como gerador de sequências digitais e controlador de estados sem a necessidade de lógica discreta complexa.
-
----
-
-## Demonstração em Vídeo
-
-Todas as simulações, arquiteturas e tabelas de estados estão explicadas e demonstradas no vídeo:
-
-[![Assista no YouTube](https://img.shields.io/badge/YouTube-Assistir%20Demonstração-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=PBoiozIbCmw)
-
-> **Link direto:** [Pattern Generator - Proteus Projects (YouTube)](https://www.youtube.com/watch?v=PBoiozIbCmw)
+Repositório com projetos práticos, simulações e códigos. 
+Este repositório serve como guia de estudos e base de consulta para modelagem de máquinas de estado em hardware, programação bare-metal para microcontroladores PIC18 e interfaceamento de periféricos no Proteus.
 
 ---
 
 ## Sumário
-- [Guia Rápido: O que é o Pattern Generator?](#guia-rápido-o-que-é-o-pattern-generator)
-- [Projetos Implementados](#projetos-implementados)
-  - [1. Semáforo Duplo com Alternância de Tempo](#1-semáforo-duplo-com-alternância-de-tempo)
-  - [2. Relógio Digital (6 Dígitos com Ajuste Manual)](#2-relógio-digital-6-dígitos-com-ajuste-manual)
-  - [3. Letreiro em Matriz de LEDs (Estático e Rolagem)](#3-letreiro-em-matriz-de-leds-estático-e-rolagem)
-  - [4. Frequencímetro Digital (10 Hz a 99 Hz)](#4-frequencímetro-digital-10-hz-a-99-hz)
-  - [5. Transmissor Serial UART](#5-transmissor-serial-uart)
-  - [6. Controlador de Servo Motor por Ângulo](#6-controlador-de-servo-motor-por-ângulo)
-- [Como Simular no Proteus](#como-simular-no-proteus)
-- [Repositórios Relacionados](#repositórios-relacionados)
+
+- [Visão Geral dos Módulos](#-visão-geral-dos-módulos)
+- [1. Pattern Generator (Proteus)](#1-pattern-generator-proteus)
+- [2. PIC18 Architecture & MPLAB](#2-pic18-architecture--mplab)
+- [3. LCD Interfacing & Peripherals](#3-lcd-interfacing--peripherals)
+- [Ferramentas Utilizadas](#️-ferramentas-utilizadas)
+- [Como Executar as Simulações](#-como-executar-as-simulações)
 
 ---
 
-## Guia Rápido: O que é o Pattern Generator?
+## Visão Geral dos Módulos
 
-Para quem é iniciante em simulação digital no Proteus, o **Pattern Generator** funciona como uma memória de padrões programável sequencial:
-
-* **Buffer de Padrões:** Cada linha do componente armazena o nível lógico (0 ou 1) que será injetado em cada pino de saída.
-* **Avanço por Clock:** A cada pulso de clock recebido, ele avança para o próximo endereço de memória e atualiza as saídas.
-* **Pino de Trigger (Reset/Loop):** Permite configurar uma condição para reiniciar a varredura, criando ciclos infinitos ou máquinas de estados finitas.
-* **Arquivos de Padrão (.ptn):** As tabelas de transição podem ser salvas, exportadas ou geradas via scripts e planilhas eletrônicas.
-
----
-
-## Projetos Implementados
-
-### 1. Semáforo Duplo com Alternância de Tempo
-Controle de sinalização para cruzamento de duas vias com alternância entre fluxo normal e horário de pico.
-
-* **Bases de Tempo:**
-  * Modo Normal: período de 1,0 s por estado.
-  * Modo Pico: período de 500 ms (dobro da velocidade).
-* **Sincronismo e Continuidade:** A alternância do clock de entrada é feita por um Multiplexador acionado via Logic State. Para evitar glitches ou saltos indesejados durante a comutação, a saída passa por um **Flip-Flop tipo D** sincronizado diretamente com a mesma linha de clock do Pattern Generator.
+```text
+microprocessors-microcontrollers/
+├── pattern-generator/      # FSMs em hardware, multiplexação e geração de padrões digitais
+├── pic18/                  # Aplicações para microcontroladores PIC18 (C e Assembly)
+└── lcd/                    # Interfaceamento e temporização com displays alfanuméricos
+```
 
 ---
 
-### 2. Relógio Digital (6 Dígitos com Ajuste Manual)
-Cronômetro/relógio completo com formato de 6 dígitos (HH:MM:SS) em displays de 7 segmentos.
+## 1. Pattern Generator (Proteus)
 
-* **Estrutura em Cascata:**
-  * **Unidades (Segundos / Minutos):** Sequência de 0 a 9. Ao atingir o valor 9, emite pulso de trigger para a dezena.
-  * **Dezenas (Segundos / Minutos):** Sequência de 0 a 5. O estado correspondente ao 6 dispara o reset imediato.
-* **Controle de Horas:** Conta com botões para ajuste rápido de horas e minutos. O projeto explora duas soluções:
-  1. *Clock Compartilhado:* Unidades e dezenas avançam em conjunto até 11/12 h (repetindo valores na dezena para casar os estados).
-  2. *Trigger Desacoplado:* A dezena de horas só avança a cada 10 incrementos da unidade, mantendo os buffers de memória limpos e independentes.
+Implementação de circuitos digitais e máquinas de estados finitas (FSM) utilizando exclusivamente o instrumento **Pattern Generator** do Proteus VSM, explorando sincronismo, clock e transições sem o uso de código de programa tradicional.
 
----
+### Demonstração em Vídeo
+Confira a explicação detalhada de cada projeto no YouTube:  
+[![Assista no YouTube](https://img.shields.io/badge/YouTube-Assistir%20Demonstração-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=PBoiozIbCmw)
 
-### 3. Letreiro em Matriz de LEDs (Estático e Rolagem)
-Controle visual em matriz de LEDs utilizando varredura matricial (multiplexação por colunas e linhas).
+> **Link direto:** [Pattern Generator - Proteus Projects (YouTube)](https://www.youtube.com/watch?v=PBoiozIbCmw)
 
-* **Parte 1 (Caractere Estático):** O gerador ativa uma coluna por vez em alta frequência (período de 1 ms). A taxa de atualização engana a visão humana pela persistência retiniana, parecendo um caractere fixo e estável. Um segundo Pattern Generator gera o loop de repetição.
-* **Parte 2 (Letreiro Deslizante / Rolagem):** Desenho frame a frame da letra entrando pela borda, cruzando o display e saindo.
-  * *Solução para Fantasmas (Ghosting):* Foi adicionado um ciclo vazio (espaçamento) entre a ativação das colunas adjacentes, eliminando sombras causadas pelo tempo de resposta dos LEDs.
 
----
-
-### 4. Frequencímetro Digital (10 Hz a 99 Hz)
-Instrumento virtual capaz de mensurar a frequência de ondas quadradas com erro de no máximo 1% (±1 Hz).
-
-* **Base de Cálculo:**
-  * Para medir até 100 Hz com erro inferior a 1%, o clock do Pattern Generator foi fixado em **10.000 Hz (10 kHz)**.
-  * Cada pulso do gerador equivale a um período base de **0,1 ms (0,0001 s)**.
-  * A frequência final exibida nos displays corresponde ao inverso do tempo acumulado pela onda de teste:  
-    `Frequência (Hz) = 1 / Tempo Medido`
-* **Indicação de Fora de Faixa:** Sinais abaixo de 10 Hz ou acima de 99 Hz acionam a mensagem de erro `EE` nos displays. O arquivo `.ptn` foi pré-calculado e populado via planilha eletrônica.
+### Projetos Desenvolvidos
+- **Semáforo Inteligente:** Controle de cruzamento com temporização adaptável (modo normal vs. horário de pico selecionado por multiplexador) com sincronização por flip-flop D.
+- **Relógio Digital de 6 Dígitos:** Contagem de horas, minutos e segundos em displays de 7 segmentos com ajuste manual de hora e minuto e lógica de trigger em cascata.
+- **Letreiro de Matriz de LEDs:**
+  - *Parte 1:* Exibição estática da letra inicial com varredura rápida de colunas e controle de linhas.
+  - *Parte 2:* Efeito de texto contínuo em deslocamento (scroll horizontal) com compensação de *shadowing*.
+- **Frequencímetro Digital (10 Hz a 99 Hz):** Medição de sinal TTL com taxa de erro <= 1%, utilizando mapeamento de posições de memória para períodos calculados.
+- **Transmissor Serial UART:** Envio assíncrono de caracteres a 1200 baud (formato 8N1: 8 bits de dados, sem paridade, 1 stop bit).
+- **Controlador de Servo Motor:** Modulação com 5 ângulos fixos (0°, 45°, 90°, 120° e 180°), calculando o passo de 15° por divisão de clock e offset de pulso.
 
 ---
 
-### 5. Transmissor Serial UART
-Emulação por hardware de uma linha de transmissão serial assíncrona (TX) para envio cíclico de texto em ASCII.
+## 2. PIC18 Architecture & MPLAB
 
-* **Parâmetros da UART:**
-  * Baud Rate: 1200 bps
-  * Quadro de Dados: 8 bits de payload
-  * Paridade: Nenhuma (None)
-  * Bit de Parada: 1 Stop Bit
-* **Protocolo de Linha:**
-  * Repouso / Idle: nível lógico alto (1)
-  * Start Bit: nível lógico baixo (0)
-  * Dados: 8 bits enviados com LSB primeiro
-  * Stop Bit: nível lógico alto (1)
-* **Validação:** A saída digital do Pattern Generator foi conectada diretamente à porta de recepção (RX) do **Virtual Terminal** do Proteus.
+Projetos embarcados desenvolvidos para a família **PIC18** (Microchip), explorando a manipulação direta de registradores de I/O, interrupções, timers e lógica de controle em baixo nível.
 
----
+### Demonstração em Vídeo
+[![Assista no YouTube](https://img.shields.io/badge/YouTube-Assistir%20Demonstração-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=3aw8htt9vh0)
 
-### 6. Controlador de Servo Motor por Ângulo
-Geração de sinal PWM para controle angular de servo motor em 5 posições pré-definidas: 0°, 45°, 90°, 120° e 180°.
+> **Link direto:** [PIC 18 - Proteus Projects & MPLAB (YouTube)](https://www.youtube.com/watch?v=3aw8htt9vh0)
 
-* **Especificação do Sinal:**
-  * Período do trem de pulsos: **20 ms** (frequência de 50 Hz).
-  * Largura mínima do pulso (0°): **1,0 ms** (offset base).
-  * Largura máxima do pulso (180°): **2,0 ms**.
-  * Faixa útil de controle: **1,0 ms** distribuído linearmente entre 0° e 180°.
-* **Discretização em 15 Graus:**
-  * Maior divisor comum entre os ângulos desejados: 15°.
-  * Total de divisões para 180°: 12 partes de 15°.
-  * Resolução temporal por passo: `1 ms / 12 = 83,33 us`.
-  * Frequência de clock adotada no gerador: **12.000 Hz (12 kHz)**.
-* **Composição dos Estados:**
-  * **0°:** Offset base (12 passos de 83,33 us = 1,0 ms)
-  * **45°:** Offset + 3 passos (1,25 ms)
-  * **90°:** Offset + 6 passos (1,50 ms)
-  * **120°:** Offset + 8 passos (1,67 ms)
-  * **180°:** Offset + 12 passos (2,00 ms)
+
+### Tópicos Abordados
+- Configuração de pinos de propósito geral (`TRIS`, `PORT`, `LAT`).
+- Temporização precisa via Hardware Timers (Timer0/Timer1).
+- Rotinas de tratamento de interrupção (ISR).
+- Simulação integrada do firmware compilado com o circuito esquemático no Proteus.
 
 ---
 
-## Como Simular no Proteus
+## 3. LCD Interfacing & Peripherals
+
+Módulo dedicado à comunicação entre o microcontrolador e displays alfanuméricos (controlador padrão HD44780 ou equivalente), abordando sinais de controle, temporizações críticas e barramento de dados.
+
+### Demonstração em Vídeo
+[![Assista no YouTube](https://img.shields.io/badge/YouTube-Assistir%20Demonstração-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=MUeVrRSDSxg&t=25s)
+
+> **Link direto:** [LCD - Interfacing & Demonstration (YouTube)](https://www.youtube.com/watch?v=MUeVrRSDSxg&t=25s)
+
+
+### Tópicos Abordados
+- Inicialização e envio de comandos/instruções para o controlador do display.
+- Operação em modo 4-bits vs. 8-bits para economia de pinos de I/O.
+- Temporização e pulsos na linha `Enable` (E) e chaveamento `RS` (Register Select).
+- Exibição dinâmica de strings, caracteres customizados e leituras de sensores.
+
+---
+
+## Ferramentas Utilizadas
+
+- **Labcenter Proteus VSM:** Esquemáticos e simulação interativa de hardware e sinais.
+- **Microchip MPLAB X IDE / MPLAB IDE:** Ambiente de desenvolvimento e compilação do firmware.
+- **Compiladores:** XC8 / C18 / MPASM.
+- **Planilhas de Cálculo:** Dimensionamento temporal de padrões e frequências.
+
+---
+
+## Como Executar as Simulações
 
 1. Clone o repositório:
    ```bash
-   git clone [https://github.com/raquelmcoelho/microprocessors-microcontrollers.git](https://github.com/raquelmcoelho/microprocessors-microcontrollers.git)
-    ```
-
-2. Abra o software Proteus ISIS (versão 8.0 ou superior).
-
-3. Entre na pasta do projeto desejado e abra o arquivo de esquemático (.pdsprj ou .dsn).
-
-4. Verifique se o componente Pattern Generator está com o arquivo .ptn correto vinculado em suas propriedades.
-
-5. Clique no botão de Play (Simular) no canto inferior esquerdo.
-
----  
-##  Repositórios Relacionados
-[Digital Eletronics](https://github.com/raquelmcoelho/digital-eletronics): Circuitos de Eletrônica Digital e portas lógicas no Proteus.
+   git clone https://github.com/raquelmcoelho/microprocessors-microcontrollers.git
+   ```
+2. Abra o arquivo `.pdsprj` correspondente ao módulo desejado no **Proteus**.
+3. No caso dos projetos do **PIC18 / LCD**, certifique-se de que o caminho do binário compilado (`.hex` ou `.cof`) nas propriedades do componente no Proteus aponte para o arquivo gerado pelo MPLAB.
+4. Execute a simulação interativa (botão *Play* no canto inferior esquerdo do Proteus).
